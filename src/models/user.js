@@ -3,7 +3,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Spending = require('./spendings')
-const ms = require('ms')
+const Earning = require('./earnings')
 
 const userSchema = new mongoose.Schema({
     createdAt: {
@@ -45,6 +45,12 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }],
+    accounts: [{
+        account: {
+            type: String,
+            default: "Main"
+        }
+    }],
     expireAt: {
         type: Date,
         default: Date.now() + 86400000,
@@ -78,6 +84,17 @@ userSchema.virtual('userSpendings', {
     foreignField: 'ownerId'
 })
 
+// userSchema.virtual('userAccounts', {
+//     ref: 'Account',
+//     localField: '_id',
+//     foreignField: 'ownerId'
+// })
+
+userSchema.virtual('userEarnings', {
+    ref: 'Earning',
+    localField: '_id',
+    foreignField: 'ownerId'
+})
 
 //Hiding user data
 userSchema.methods.toJSON = function () {
@@ -93,7 +110,7 @@ userSchema.methods.toJSON = function () {
 //Generating Auth Token
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: user.id.toString() }, '$2a$08$2J9BhHV6rKpag3AGKBHXgeMrmgwWi0P3RNn.xn5m97/247gQGGF46')
+    const token = jwt.sign({ _id: user.id.toString() }, process.env.JWT_SECRET)
     user.tokens = user.tokens.concat({ token })
     await user.save()
     return token
@@ -108,10 +125,12 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-//Delete all user spendings when user is removed
+//Delete all user spendings / earning and accounts when user is removed
 userSchema.pre('remove', async function (next) {
     const user = this
     await Spending.deleteMany({ownerId: user._id})
+    await Earning.deleteMany({ownerId: user._id})
+    // await Account.deleteMany({ownerId: user._id})
     next()
 })
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const spendingSchema = new mongoose.Schema({
+const earningSchema = new mongoose.Schema({
     ownerId: {
         type: mongoose.Schema.Types.ObjectId,
         required:true,
@@ -8,7 +8,8 @@ const spendingSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        defaulf: "Spending"
+        default: "Earning"
+        
     },
     amount: {
         type: Number,
@@ -24,7 +25,7 @@ const spendingSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    dateOfSpending: {
+    dateOfEarning: {
         type: Date,
         default: Date.now,
         required: true,
@@ -43,7 +44,7 @@ const spendingSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const Spending = mongoose.model('Spending', spendingSchema)
+const Earning = mongoose.model('Earning', earningSchema)
 
 
-module.exports = Spending
+module.exports = Earning
