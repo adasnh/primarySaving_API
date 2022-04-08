@@ -21,8 +21,29 @@ router.post('/spendings', auth, async (req,res) => {
 router.get('/spendings', auth, async (req,res) => {
 
     try{
-        const spendings = await Spending.find({ownerId: req.user._id})
-        res.status(200).send(spendings)
+        if(req.query.category == null) {
+            const spendings = await Spending.find({
+                ownerId: req.user._id,
+                dateOfSpending: {
+                    $gte: req.query.firstDate,
+                    $lte: req.query.secondDate
+                }
+            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
+                dateOfSpending: -1
+            })
+            res.status(200).send(spendings)
+        } else {
+            const spendings = await Spending.find({
+                ownerId: req.user._id,
+                category: req.query.category,
+                dateOfSpending: {
+                    $gte: req.query.firstDate,
+                    $lte: req.query.secondDate
+                }
+            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit))
+            res.status(200).send(spendings)
+        }
+        
     } catch (e) {
         res.status(404).send(e.message)
     }

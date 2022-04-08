@@ -3,8 +3,13 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Spending = require('./spendings')
+const ms = require('ms')
 
 const userSchema = new mongoose.Schema({
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
     name: {
         type: String,
         required: true,
@@ -39,7 +44,13 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true
         }
-    }]
+    }],
+    expireAt: {
+        type: Date,
+        default: Date.now() + 86400000,
+      },
+}, {
+    timestamps: true
 })
 
 userSchema.statics.findByCredentials = async (email, password) => {
@@ -91,11 +102,9 @@ userSchema.methods.generateAuthToken = async function () {
 // Hash the password
 userSchema.pre('save', async function (next) {
     const user = this
-
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8)
     }
-    
     next()
 })
 
