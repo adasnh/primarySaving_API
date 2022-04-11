@@ -2,9 +2,14 @@ const express = require('express')
 const router = new express.Router()
 const Earning = require('../models/earnings')
 const auth = require('../middleware/auth')
+const m2s = require('mongoose-to-swagger');
 
 /*****************************************/
 /*****************************************/
+
+// const swaggerSchema = m2s(Earning)
+// console.log(swaggerSchema)
+
 router.post('/earnings', auth, async (req,res) => {
     const earning = new Earning({
         ...req.body,

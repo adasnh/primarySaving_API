@@ -20,9 +20,11 @@ const options = {
         servers: [{
             url:"https://wsei-primary-saving.herokuapp.com",
             description: "Production"
+        }, {
+            url:"https://localhost:3000"
         }]
     },
-    apis: ["./routes/*js"]
+    apis: ["./routers/*js"]
 }
 
 const specs = swaggerJsDoc(options)
