@@ -5,6 +5,10 @@ const auth = require('../middleware/auth')
 const {sendConfirmationEmail, sendResignationEmail} = require('../emails/templates')
 /*****************************************/
 /*****************************************/
+
+router.get('/', (req,res) => {
+    res.send("It works")
+})
 router.post('/users', async (req,res) => {
     const user = new User(req.body)
     try{
@@ -32,7 +36,6 @@ router.post('/users/logout', auth, async (req, res) => {
         req.user.tokens = req.user.tokens.filter((token) => {
             return token.token !== req.token
         })
-
         await req.user.save()
         res.send()
     } catch (e) {
