@@ -95,8 +95,7 @@ router.patch('/earnings/:id', auth, async (req, res) => {
         if(!earning){
             return res.status(404).send()
         } 
-
-        updates.forEach((update) => earning[update] = req.body[update] )
+        updates.forEach((update) => earning[update] = req.body[update])
         await earning.save()
         res.status(200).send(earning)
     } catch (e) {

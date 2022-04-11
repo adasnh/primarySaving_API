@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const Spending = require('./spendings')
 const Earning = require('./earnings')
+const Saving = require('./savings')
 
 const userSchema = new mongoose.Schema({
     createdAt: {
@@ -96,6 +97,12 @@ userSchema.virtual('userEarnings', {
     foreignField: 'ownerId'
 })
 
+userSchema.virtual('userSavings', {
+    ref: 'Saving',
+    localField: '_id',
+    foreignField: 'ownerId'
+})
+
 //Hiding user data
 userSchema.methods.toJSON = function () {
     const user = this
@@ -130,6 +137,7 @@ userSchema.pre('remove', async function (next) {
     const user = this
     await Spending.deleteMany({ownerId: user._id})
     await Earning.deleteMany({ownerId: user._id})
+    await Saving.deleteMany({ownerId: user._id})
     // await Account.deleteMany({ownerId: user._id})
     next()
 })

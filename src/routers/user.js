@@ -6,9 +6,6 @@ const {sendConfirmationEmail, sendResignationEmail} = require('../emails/templat
 /*****************************************/
 /*****************************************/
 
-router.get('/', (req,res) => {
-    res.send("It works")
-})
 router.post('/users', async (req,res) => {
     const user = new User(req.body)
     try{
