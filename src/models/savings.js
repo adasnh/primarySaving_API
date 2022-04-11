@@ -9,20 +9,29 @@ const savingSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+        trim: true
     },
     balance: {
         type: Number,
-        default: 0
+        default: 0,
+        trim: true
     },
     goal: {
         type: Number,
-        default: 0
+        required: true,
+        trim: true,
+        validate(value) {
+            if(value <= 0){
+                throw new Error("Your goal should be bigger that 0.")
+            }
+        }
     },
     deadline: {
         type: Date,
         required: true,
+        trim: true,
         validate(value) {
-            if(value <= Date.now){
+            if(value <= Date.now()){
                 throw new Error("Date should be in future.")
             }
         }

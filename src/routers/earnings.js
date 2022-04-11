@@ -8,7 +8,7 @@ const auth = require('../middleware/auth')
 router.post('/earnings', auth, async (req,res) => {
     const earning = new Earning({
         ...req.body,
-        ownerId: req.user._id
+        ownerId: req.user._id,  
     })
     try {
         await earning.save()
@@ -116,7 +116,6 @@ router.get('/earnings/:id', auth, async (req, res) => {
     } catch {
         res.status(500).send(e.message)
     }
-    
 })
 
 router.delete('/earnings/:id', auth, async (req, res) => {

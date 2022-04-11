@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const Spending = require('./spendings')
 const Earning = require('./earnings')
 const Saving = require('./savings')
+const Account = require('./accounts')
 
 const userSchema = new mongoose.Schema({
     createdAt: {
@@ -46,12 +47,7 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }],
-    accounts: [{
-        account: {
-            type: String,
-            default: "Main"
-        }
-    }],
+
     expireAt: {
         type: Date,
         default: Date.now() + 86400000,
@@ -85,11 +81,11 @@ userSchema.virtual('userSpendings', {
     foreignField: 'ownerId'
 })
 
-// userSchema.virtual('userAccounts', {
-//     ref: 'Account',
-//     localField: '_id',
-//     foreignField: 'ownerId'
-// })
+userSchema.virtual('userAccounts', {
+    ref: 'Account',
+    localField: '_id',
+    foreignField: 'ownerId'
+})
 
 userSchema.virtual('userEarnings', {
     ref: 'Earning',
@@ -138,7 +134,7 @@ userSchema.pre('remove', async function (next) {
     await Spending.deleteMany({ownerId: user._id})
     await Earning.deleteMany({ownerId: user._id})
     await Saving.deleteMany({ownerId: user._id})
-    // await Account.deleteMany({ownerId: user._id})
+    await Account.deleteMany({ownerId: user._id})
     next()
 })
 
