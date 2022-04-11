@@ -6,11 +6,11 @@ const spendingSchema = new mongoose.Schema({
         required:true,
         ref: 'User'
     },
-    accountId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required:true,
-        ref: 'Account'
-    },
+    // accountId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     required:true,
+    //     ref: 'Account'
+    // },
     type: {
         type: String,
         defaulf: "Spending"
