@@ -10,24 +10,24 @@ const swaggerJsDoc = require('swagger-jsdoc')
 /*****************************************/
 /*****************************************/
 
-const options = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-           title: "primarySaving API",
-           version: "1.0.0",
-        },
-        servers: [{
-            url:"https://wsei-primary-saving.herokuapp.com",
-            description: "Production"
-        }, {
-            url:"https://localhost:3000"
-        }]
-    },
-    apis: ["./routers/*js"]
-}
+// const options = {
+//     definition: {
+//         openapi: "3.0.0",
+//         info: {
+//            title: "primarySaving API",
+//            version: "1.0.0",
+//         },
+//         servers: [{
+//             url:"https://wsei-primary-saving.herokuapp.com",
+//             description: "Production"
+//         }, {
+//             url:"https://localhost:3000"
+//         }]
+//     },
+//     apis: ["./routers/*js"]
+// }
 
-const specs = swaggerJsDoc(options)
+//const specs = swaggerJsDoc(options)
 
 const app = express()
 const port = process.env.PORT
@@ -37,7 +37,7 @@ app.use(userRouter)
 app.use(spendingRouter)
 app.use(earningRouter)
 app.use(savingRouter)
-app.use("/swagger", swaggerUI.serve, swaggerUI.setup(specs))
+//app.use("/swagger", swaggerUI.serve, swaggerUI.setup(specs))
 //app.use(accountRouter)
 
 

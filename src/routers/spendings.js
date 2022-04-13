@@ -5,7 +5,7 @@ const auth = require('../middleware/auth')
 
 /*****************************************/
 /*****************************************/
-router.post('/spendings', auth, async (req,res) => {
+router.post('/spendings', auth, async (req, res) => {
     const spending = new Spending({
         ...req.body,
         ownerId: req.user._id
@@ -13,53 +13,37 @@ router.post('/spendings', auth, async (req,res) => {
     try {
         await spending.save()
         res.status(201).send(spending)
-    } catch (e){
+    } catch (e) {
         res.status(404).send(e.message)
     }
 })
 
-router.get('/spendings', auth, async (req,res) => {
+router.get('/spendings', auth, async (req, res) => {
 
-    try{
-        if(req.query.category !== undefined && req.query.firstDate !== undefined && req.query.secondDate !== undefined) {
-            const spendings = await Spending.find({
-                ownerId: req.user._id,
-                dateOfSpending: {
-                    $gte: req.query.firstDate,
-                    $lte: req.query.secondDate
-                }
-            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
-                dateOfSpending: -1
-            })
-            res.status(200).send(spendings)
-        } else if(req.query.category !== undefined && req.query.firstDate === undefined && req.query.secondDate === undefined) {
-            const spendings = await Spending.find({
-                ownerId: req.user._id,
+    try {
+        const spendings = await Spending.find({
+            ownerId: req.user._id,
+            ...req.query.category ? {
                 category: req.query.category
-            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
-                dateOfSpending: -1
-            })
-            res.status(200).send(spendings)
-        } else if(req.query.category === undefined && req.query.firstDate !== undefined && req.query.secondDate !== undefined){
-            const spendings = await Spending.find({
-                ownerId: req.user._id,
+            } : {},
+            ...req.query.amount ? {
+                amount: req.query.amount
+            } : {},
+            ...req.query.dateOfSpending ? {
                 dateOfSpending: {
-                    $gte: req.query.firstDate,
-                    $lte: req.query.secondDate
+                    $gte: req.query.dateOfSpending,
                 }
-            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
-                dateOfSpending: -1
-            })
-            res.status(200).send(spendings)
-        } else {
-            const spendings = await Spending.find({
-                ownerId: req.user._id
-            }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
-                dateOfSpending: -1
-            })
-            res.status(200).send(spendings)
-        }
-        
+            } : {
+                dateOfSpending: {
+                    $gte: req.query.startDate,
+                    $lte: req.query.endDate
+                }
+            }
+        }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
+            dateOfSpending: -1
+        })
+        res.status(200).send(spendings)
+
     } catch (e) {
         res.status(404).send(e.message)
     }
@@ -68,48 +52,59 @@ router.get('/spendings', auth, async (req,res) => {
 router.get('/spendings/:id', auth, async (req, res) => {
     const _id = req.params.id
 
-    try{
-        
-        const spending = await Spending.findOne({_id, ownerId: req.user._id})
-        if(!spending){
+    try {
+
+        const spending = await Spending.findOne({
+            _id,
+            ownerId: req.user._id
+        })
+        if (!spending) {
             return res.status(404).send()
         }
         res.status(200).send(spending)
     } catch {
         res.status(500).send(e.message)
     }
-    
+
 })
 
 router.patch('/spendings/:id', auth, async (req, res) => {
     const updates = Object.keys(req.body)
     const allowedUpdates = ['amount', 'category', 'dateOfSpending', 'description']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
-    
-    if(!isValidOperation){
-        return res.status(400).send({ error: 'Invalid updates'})
+
+    if (!isValidOperation) {
+        return res.status(400).send({
+            error: 'Invalid updates'
+        })
     }
     const _id = req.params.id
-    try{
-        const spending = await Spending.findOne({_id, ownerId: req.user._id})
-        if(!spending){
+    try {
+        const spending = await Spending.findOne({
+            _id,
+            ownerId: req.user._id
+        })
+        if (!spending) {
             return res.status(404).send()
-        } 
+        }
 
-        updates.forEach((update) => spending[update] = req.body[update] )
+        updates.forEach((update) => spending[update] = req.body[update])
         await spending.save()
         res.status(200).send(spending)
     } catch (e) {
         res.status(400).send(e.message)
     }
-    
+
 })
 
 router.delete('/spendings/:id', auth, async (req, res) => {
     const _id = req.params.id
     try {
-        const spending = await Spending.findOneAndDelete({_id, ownerId: req.user._id})
-        if(!spending){
+        const spending = await Spending.findOneAndDelete({
+            _id,
+            ownerId: req.user._id
+        })
+        if (!spending) {
             return res.status(404).send()
         }
 
