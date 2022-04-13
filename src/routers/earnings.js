@@ -38,8 +38,8 @@ router.get('/earnings', auth, async (req, res) => {
                 }
             } : {
                 dateOfEarning: {
-                    $gte: req.query.startDate,
-                    $lte: req.query.endDate
+                    $gte: (req.query.startDate === undefined ? req.query.startDate = new Date(1960,01,01) : req.query.startDate),
+                    $lte: (req.query.endDate === undefined ? req.query.endDate = new Date(3000,12,12) : req.query.endDate)
                 }
             }
         }).skip(parseInt(req.query.skip)).limit(parseInt(req.query.limit)).sort({
